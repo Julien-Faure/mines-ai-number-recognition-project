@@ -1,21 +1,25 @@
 import sys
+
 import numpy as np
-np.set_printoptions(threshold=sys.maxsize)
 from sklearn import datasets
-import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+# ne plus être limité lors des prints
+np.set_printoptions(threshold=sys.maxsize)
 
 digits = datasets.load_digits()
+x = digits.images.reshape((len(digits.images), -1))
+y = digits.target
 
-# We instantiate the model specifying which solver we want to use to find the parameters
-clf_lr = LogisticRegression(solver='lbfgs', max_iter=9999)  # clf = classifier lr = logistic regression
-# print(type(digits.images[98]))
-array = np.array([])
-for digit in digits.images:
-    vector = np.reshape(digit, -1)
-    array = np.concatenate(array, vector)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.50, random_state=0)
 
-print(array)
-# print(digits.images[98])
-plt.imshow(digits.images[98], cmap='binary')
-plt.show()
+model = LogisticRegression(verbose=True, max_iter=4000, solver='lbfgs')
+model.fit(x_train, y_train)
+
+predictions = model.predict(x_test)
+
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model, x, y, cv=5)
+print("%0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
+
