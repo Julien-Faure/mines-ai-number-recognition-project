@@ -1,0 +1,5 @@
+.idea
+*.csv
+*.swp
+
+.ipynb_checkpoints/
